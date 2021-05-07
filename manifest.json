@@ -1,0 +1,7 @@
+{
+  "name": "EvenQuickerReply",
+  "version": "0.0.1",
+  "description": "Automatically creates a reply to the message you're last mentioned in.",
+  "author": "tAngent",
+  "license": "MIT"
+}

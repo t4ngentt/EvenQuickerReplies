@@ -1,64 +1,84 @@
-const { Plugin } = require("powercord/entities")
-const { getModule, channels } = require("powercord/webpack")
-const { getMessages } = getModule([ "getMessages" ], false)
-const { ComponentDispatch } = getModule(["ComponentDispatch"], false)
+const { Plugin } = require('powercord/entities')
+const {getModule, FluxDispatcher: Dispatcher, channels: { getChannelId }, constants: { ActionTypes }, channels} = require('powercord/webpack')
+const Settings = require('./Settings');
 
-const Settings = require("./Settings")
-
-
-module.exports = class quickreply extends Plugin {
-
-  startPlugin () {
-    
+class EvenQuickerReply extends Plugin {
+  constructor() {
+    super()
+    this.replyingToMessage = undefined
   }
 
-    sendmessage(){
-
-    document.addEventListener("keydown", async event => { 
-        if (!this.active) return
-        if (event.ctrlKey) return
-
-        const { getCurrentUser } = getModule(["getCurrentUser"], false)
-        const user = getCurrentUser()
-
-        const key = event.key 
-        const expectation = document.querySelector("#app-mount > div.app-1q1i1E > div > div.layers-3iHuyZ.layers-3q14ss > div > div > div > div > div.chat-3bRxxu > div.content-yTz4x3 > main > form > div > div > div > div > div > div.textArea-12jD-V.textAreaSlate-1ZzRVj.slateContainer-3Qkn2x > div.markup-2BOw-j.slateTextArea-1Mkdgw.fontSize16Padding-3Wk7zP")
-
-        if ((key) && (key == "ArrowDown")) {
-            
-            getMessages(channels.getChannelId()).toArray().map(message => {
-                const author = message.author
-
-                if (message.content.trim()) {
-                    if (!this.settings.get("exclude", true)) {
-                        // messages.push(message)
-                    } else {
-                        if (author.id == user.id) {
-                            // messages.push(message)
-                        }
-                    }
-                }
-            })  
-
-            const lastMessage = messages.pop()
-            const textArea = document.querySelector("div[class*='slateTextArea']").childNodes[0].childNodes[0]
-            const { textContent } = textArea
-
-            if ((textContent.trim().length == 0) && (lastMessage) && (document.activeElement == expectation)) {
-                ComponentDispatch.dispatchToLastSubscribed("INSERT_TEXT", {
-                    content: lastMessage.content.trim()
-                })
-
-                console.log(textArea)
-            }
-        }
-
-
-    pluginWillUnload () {
-        powercord.api.commands.unregisterCommand('mock');
+  async createPendingReply(channel, message, shouldMention, showMentionToggle) {
+    if (typeof showMentionToggle === 'undefined') {
+      showMentionToggle = channel.guild_id !== null 
     }
-
+    Dispatcher.dirtyDispatch({
+      type: ActionTypes.CREATE_PENDING_REPLY,
+      channel,
+      message,
+      shouldMention,
+      showMentionToggle,
+    })
+  }
+  onCreatePendingReply = (data) => {
+    if (this.replyingToMessage !== data.message.id) {
+      this.replyingToMessage = data.message.id
     }
-    }
+  }
 
-};
+  async startPlugin() {
+    powercord.api.settings.registerSettings('quickdelete', {
+      category: this.entityID,
+      label: 'EvenQuickerReply',
+      render: Settings
+    });
+    
+
+    const { getChannel } = await getModule(['getChannel'])
+    const { getMessages } = await getModule(['getMessages'])
+    this.getChannel = getChannel
+    this.getMessages = getMessages
+
+    Dispatcher.subscribe(
+      ActionTypes.CREATE_PENDING_REPLY,
+      this.onCreatePendingReply
+    )
+
+    document.addEventListener('keydown', async event => {
+      if (event.ctrlKey) return
+      if (event.key !== 'ArrowDown') return
+      let messages = []                
+      getMessages(channels.getChannelId()).toArray().map(message => {
+          if (message.mentioned){
+              messages.push(message)
+          }}
+      )
+      let msgArray = messages.reverse()
+      const lastMessage = msgArray[0];
+
+      if((this.settings.get('automention', true)))
+        var val = false
+      else
+        var val = true;
+
+      if (event.key == 'ArrowDown') {
+        console.log(val)
+        this.createPendingReply(this.getChannel(getChannelId()), lastMessage, val)
+    }
+    } )
+  }
+
+  pluginWillUnload() {
+    Dispatcher.unsubscribe(
+      ActionTypes.CREATE_PENDING_REPLY,
+      this.onCreatePendingReply
+    )
+    window.removeEventListener('keydown')
+  }
+}
+
+module.exports = EvenQuickerReply
+
+/*
+major thanks to https://github.com/relative for parts of the code
+*/
