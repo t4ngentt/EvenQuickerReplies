@@ -44,9 +44,12 @@ class EvenQuickerReply extends Plugin {
       this.onCreatePendingReply
     )
 
-    document.addEventListener('keydown', async event => {
-      if (event.ctrlKey) return
-      if (event.key !== 'ArrowDown') return
+    document.addEventListener('keydown', async event => { 
+      const textArea = document.querySelector("div[class*='slateTextArea']");
+      const { textContent } = textArea;
+
+      if(textContent.trim().length !== 0 || event.ctrlKey || event.key !== 'ArrowDown')
+          return;
       let messages = []                
       getMessages(channels.getChannelId()).toArray().map(message => {
           if (message.mentioned){
@@ -55,12 +58,13 @@ class EvenQuickerReply extends Plugin {
       )
       let msgArray = messages.reverse()
       const lastMessage = msgArray[0];
+      console.log(lastMessage)
 
       if((this.settings.get('automention', true)))
         var val = false
       else
         var val = true;
-
+          
       if (event.key == 'ArrowDown') {
         console.log(val)
         this.createPendingReply(this.getChannel(getChannelId()), lastMessage, val)
