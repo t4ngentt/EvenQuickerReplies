@@ -50,14 +50,16 @@ class EvenQuickerReply extends Plugin {
 
       if(textContent.trim().length !== 0 || event.ctrlKey || event.key !== 'ArrowDown')
           return;
-      let messages = []                
+      let messages = []                 
       getMessages(channels.getChannelId()).toArray().map(message => {
           if (message.mentioned){
               messages.push(message)
           }}
       )
-      let msgArray = messages.reverse()
-      const lastMessage = msgArray[0];
+      if(messages.length  == 0)
+        return;
+        
+      const lastMessage = messages[messages.length - 1]
       console.log(lastMessage)
 
       if((this.settings.get('automention', true)))
@@ -65,13 +67,12 @@ class EvenQuickerReply extends Plugin {
       else
         var val = true;
           
-      if (event.key == 'ArrowDown') {
+      if (event.key == 'ArrowDown') { 
         console.log(val)
         this.createPendingReply(this.getChannel(getChannelId()), lastMessage, val)
     }
     } )
   }
-
   pluginWillUnload() {
     Dispatcher.unsubscribe(
       ActionTypes.CREATE_PENDING_REPLY,
