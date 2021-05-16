@@ -50,7 +50,7 @@ class EvenQuickerReply extends Plugin {
       const textArea = document.querySelector("div[class*='slateTextArea']");
       const { textContent } = textArea;
 
-      if(textContent.trim().length !== 0 || event.ctrlKey || event.key !== 'ArrowDown' || document.activeElement !== textArea)
+      if(event.ctrlKey || event.key !== 'ArrowDown' || document.activeElement !== textArea)
           return;
 
       let messages = []                 
@@ -72,6 +72,8 @@ class EvenQuickerReply extends Plugin {
           return
         }
         else{
+          if(textContent.trim().length !== 0)
+            return
           if((this.settings.get('automention', true)))
             var val = false
           else
