@@ -99,6 +99,5 @@ class EvenQuickerReply extends Plugin {
 module.exports = EvenQuickerReply
 
 /*
-major thanks to https://github.com/relative for parts of the code
+thanks to https://github.com/relative for some code references
 */
-//#app-mount > div.app-1q1i1E > div > div.layers-3iHuyZ.layers-3q14ss > div > div > div > div > div.chat-3bRxxu > div.content-yTz4x3 > main > form > div > div > div > div.container-2fRDfG
