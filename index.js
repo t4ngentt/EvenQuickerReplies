@@ -48,7 +48,7 @@ class EvenQuickerReply extends Plugin {
       const textArea = document.querySelector("div[class*='slateTextArea']");
       const { textContent } = textArea;
 
-      if(textContent.trim().length !== 0 || event.ctrlKey || event.key !== 'ArrowDown' || !document.activeElement !== textArea)
+      if(textContent.trim().length !== 0 || event.ctrlKey || event.key !== 'ArrowDown' || document.activeElement !== textArea)
           return;
 
       if(document.querySelector("div[class*='2fRDfG']"))
