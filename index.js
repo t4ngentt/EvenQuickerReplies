@@ -65,10 +65,12 @@ class EvenQuickerReply extends Plugin {
       if (event.key == 'ArrowDown') { 
         if(document.querySelector("div[class*='colorMuted-HdFt4q size14-e6ZScH mentionButton-3710-W']")){
           this.createPendingReply(this.getChannel(getChannelId()), globalmessage, true)
+          console.log("called 1")
           return
         }
         if(document.querySelector("div[class*='colorLink-2vG20E size14-e6ZScH mentionButton-3710-W']")){
           this.createPendingReply(this.getChannel(getChannelId()), globalmessage, false)
+          console.log("called 2")
           return
         }
         else{
@@ -79,6 +81,7 @@ class EvenQuickerReply extends Plugin {
           else
             var val = true;
           globalmessage = lastMessage;
+          console.log("called 3")
           this.createPendingReply(this.getChannel(getChannelId()), lastMessage, val)
         }
     }
@@ -96,5 +99,6 @@ class EvenQuickerReply extends Plugin {
 module.exports = EvenQuickerReply
 
 /*
-thanks to https://github.com/relative for some references
+major thanks to https://github.com/relative for parts of the code
 */
+//#app-mount > div.app-1q1i1E > div > div.layers-3iHuyZ.layers-3q14ss > div > div > div > div > div.chat-3bRxxu > div.content-yTz4x3 > main > form > div > div > div > div.container-2fRDfG
