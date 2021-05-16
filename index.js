@@ -48,17 +48,22 @@ class EvenQuickerReply extends Plugin {
       const textArea = document.querySelector("div[class*='slateTextArea']");
       const { textContent } = textArea;
 
-      if(textContent.trim().length !== 0 || event.ctrlKey || event.key !== 'ArrowDown')
+      if(textContent.trim().length !== 0 || event.ctrlKey || event.key !== 'ArrowDown' || !document.activeElement !== textArea)
           return;
+
+      if(document.querySelector("div[class*='2fRDfG']"))
+        console.log("exists pog??????")
+
       let messages = []                 
       getMessages(channels.getChannelId()).toArray().map(message => {
           if (message.mentioned){
               messages.push(message)
           }}
       )
+
       if(messages.length  == 0)
         return;
-        
+
       const lastMessage = messages[messages.length - 1]
       console.log(lastMessage)
 
@@ -71,7 +76,7 @@ class EvenQuickerReply extends Plugin {
         console.log(val)
         this.createPendingReply(this.getChannel(getChannelId()), lastMessage, val)
     }
-    } )
+    })
   }
   pluginWillUnload() {
     Dispatcher.unsubscribe(
@@ -87,3 +92,4 @@ module.exports = EvenQuickerReply
 /*
 major thanks to https://github.com/relative for parts of the code
 */
+//#app-mount > div.app-1q1i1E > div > div.layers-3iHuyZ.layers-3q14ss > div > div > div > div > div.chat-3bRxxu > div.content-yTz4x3 > main > form > div > div > div > div.container-2fRDfG
