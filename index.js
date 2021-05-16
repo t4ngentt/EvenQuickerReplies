@@ -43,6 +43,8 @@ class EvenQuickerReply extends Plugin {
       ActionTypes.CREATE_PENDING_REPLY,
       this.onCreatePendingReply
     )
+    
+    var globalmessage = null;
 
     document.addEventListener('keydown', async event => { 
       const textArea = document.querySelector("div[class*='slateTextArea']");
@@ -51,30 +53,32 @@ class EvenQuickerReply extends Plugin {
       if(textContent.trim().length !== 0 || event.ctrlKey || event.key !== 'ArrowDown' || document.activeElement !== textArea)
           return;
 
-      if(document.querySelector("div[class*='2fRDfG']"))
-        console.log("exists pog??????")
-
       let messages = []                 
       getMessages(channels.getChannelId()).toArray().map(message => {
           if (message.mentioned){
               messages.push(message)
-          }}
-      )
-
+          }})
       if(messages.length  == 0)
         return;
-
       const lastMessage = messages[messages.length - 1]
-      console.log(lastMessage)
-
-      if((this.settings.get('automention', true)))
-        var val = false
-      else
-        var val = true;
           
       if (event.key == 'ArrowDown') { 
-        console.log(val)
-        this.createPendingReply(this.getChannel(getChannelId()), lastMessage, val)
+        if(document.querySelector("div[class*='colorMuted-HdFt4q size14-e6ZScH mentionButton-3710-W']")){
+          this.createPendingReply(this.getChannel(getChannelId()), globalmessage, true)
+          return
+        }
+        if(document.querySelector("div[class*='colorLink-2vG20E size14-e6ZScH mentionButton-3710-W']")){
+          this.createPendingReply(this.getChannel(getChannelId()), globalmessage, false)
+          return
+        }
+        else{
+          if((this.settings.get('automention', true)))
+            var val = false
+          else
+            var val = true;
+          globalmessage = lastMessage;
+          this.createPendingReply(this.getChannel(getChannelId()), lastMessage, val)
+        }
     }
     })
   }
